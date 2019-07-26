@@ -1,0 +1,40 @@
+version: '2'
+
+networks:
+  system_traefik:
+    external: true
+
+services:
+
+  # -- project services ----------- --- --  -
+
+  grafana:
+    environment:
+      GF_INSTALL_PLUGINS: grafana-azure-data-explorer-datasource
+      GF_SERVER_DOMAIN: grafana.${DX_HOST}
+      GF_SERVER_ROOT_URL: http://grafana.${DX_HOST}
+      GF_AUTH_GENERIC_OAUTH_ENABLED: 'True'
+      # signup must be true; otherwise user must already exist in internal db. Put signup off in inAuth0
+      GF_AUTH_GENERIC_OAUTH_ALLOW_SIGN_UP: 'True'
+      GF_AUTH_GENERIC_OAUTH_TEAM_IDS: ''
+      GF_AUTH_GENERIC_OAUTH_ALLOWED_ORGANIZATIONS: ''
+      GF_AUTH_GENERIC_OAUTH_NAME: Auth0
+      GF_AUTH_GENERIC_OAUTH_CLIENT_ID:
+      GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET:
+      GF_AUTH_GENERIC_OAUTH_SCOPES: openid profile email
+      GF_AUTH_GENERIC_OAUTH_AUTH_URL:
+      GF_AUTH_GENERIC_OAUTH_TOKEN_URL:
+      GF_AUTH_GENERIC_OAUTH_API_URL:
+    networks:
+      - system_traefik
+    image: grafana/grafana:6.2.5
+    labels:
+      traefik.backend: ${COMPOSE_PROJECT_NAME}-api
+      traefik.frontend.rule: Host:grafana.${DX_HOST}
+      traefik.port: "3000"
+      traefik.docker.network: system_traefik
+    ports:
+      - 3033:3000
+    volumes:
+      - ${DX_VOLUMES}/grafana/logs:/var/log/grafana
+      - ${DX_VOLUMES}/grafana/data:/var/lib/grafana
