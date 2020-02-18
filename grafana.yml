@@ -10,7 +10,7 @@ services:
 
   grafana:
     environment:
-      GF_INSTALL_PLUGINS: grafana-azure-data-explorer-datasource
+      GF_INSTALL_PLUGINS: grafana-azure-data-explorer-datasource 2.0.0, briangann-datatable-panel
       GF_SERVER_DOMAIN: grafana.${DX_HOST}
       GF_SERVER_ROOT_URL: http://grafana.${DX_HOST}
       GF_AUTH_GENERIC_OAUTH_ENABLED: 'True'
